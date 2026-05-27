@@ -1,7 +1,7 @@
 """Shared test fixtures for CaraBot.
 
 Provides:
-- In-memory SQLite database (no PostgreSQL needed)
+- File-based SQLite database (no PostgreSQL needed)
 - Mock vector store (no Milvus/Chroma needed)
 - Mock embedding service (fast, deterministic)
 - Test HTTP client configured with the app
@@ -10,6 +10,7 @@ Provides:
 from __future__ import annotations
 
 import os
+import tempfile
 import uuid
 from collections.abc import AsyncGenerator
 from typing import Any
@@ -21,10 +22,22 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from src.app.models import Base
 
+# Generate a unique test DB file per session
+_test_db_file = os.path.join(tempfile.gettempdir(), f"carabot_test_{uuid.uuid4().hex[:8]}.db")
+
+# Clean up any leftover test DB from previous runs
+import glob as _glob
+for _f in _glob.glob(os.path.join(tempfile.gettempdir(), "carabot_test_*.db")):
+    try:
+        os.remove(_f)
+    except OSError:
+        pass
+_test_db_url = f"sqlite+aiosqlite:///{_test_db_file}"
+
 # Force test configuration before importing app modules
 os.environ["API_KEY"] = "test-api-key"
 os.environ["VECTOR_STORE_TYPE"] = "chroma"
-os.environ["DB_URL"] = "sqlite+aiosqlite:///:memory:"
+os.environ["DB_URL"] = _test_db_url
 os.environ["REDIS_URL"] = "redis://localhost:6379/0"
 os.environ["BGE_MODEL_PATH"] = "/tmp/test-models/bge-m3"
 os.environ["LOG_FILE"] = "/dev/null"
@@ -33,13 +46,16 @@ os.environ["LOG_FORMAT"] = "text"
 
 @pytest.fixture
 def test_db_url() -> str:
-    """In-memory SQLite URL for tests."""
-    return "sqlite+aiosqlite:///:memory:"
+    """Shared file-based SQLite URL for tests so app and fixtures see the same data."""
+    return _test_db_url
 
 
 @pytest.fixture
 async def db_engine_and_session(test_db_url: str):
-    """Create an async SQLAlchemy engine with in-memory SQLite."""
+    """Create an async SQLAlchemy engine with file-based SQLite.
+
+    Uses the same file as the app so tables created by the lifespan are visible.
+    """
     engine = create_async_engine(test_db_url, echo=False)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -87,14 +103,29 @@ def mock_embedding_service() -> MagicMock:
 
 @pytest.fixture
 def app_with_mocks(mock_vector_store, mock_embedding_service):
-    """Create a FastAPI test app with mocked dependencies."""
+    """Create a FastAPI test app with mocked dependencies.
+
+    Ensures database tables exist before yielding the app.
+    """
     from src.app.core.config import load_settings
     from src.app.core.logging import setup_logging
     from src.app.main import create_app
+    from src.app.models import Base
 
-    setup_logging(load_settings())
+    settings = load_settings()
+    setup_logging(settings)
 
-    # Override the create_app to use mocks
+    # Create tables before the app starts (lifespan won't trigger with ASGITransport)
+    import asyncio
+
+    async def _create_tables():
+        engine = create_async_engine(settings.db_url, echo=False)
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        await engine.dispose()
+
+    asyncio.get_event_loop().run_until_complete(_create_tables())
+
     from unittest.mock import patch
 
     with (

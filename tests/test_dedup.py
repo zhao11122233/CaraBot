@@ -28,7 +28,7 @@ class TestDedupService:
         _, session_factory = db_engine_and_session
         return DedupService(session_factory)
 
-    def test_compute_hash_deterministic(self, dedup: DedupService) -> None:
+    async def test_compute_hash_deterministic(self, dedup: DedupService) -> None:
         """SHA256 hash of the same content should always be identical."""
         content = b"hello world"
         h1 = dedup.compute_hash(content)
@@ -36,7 +36,7 @@ class TestDedupService:
         assert h1 == h2
         assert len(h1) == 64  # SHA256 hex digest is 64 chars
 
-    def test_compute_hash_different_for_different_content(self, dedup: DedupService) -> None:
+    async def test_compute_hash_different_for_different_content(self, dedup: DedupService) -> None:
         """Different content should produce different hashes."""
         h1 = dedup.compute_hash(b"hello")
         h2 = dedup.compute_hash(b"world")
@@ -132,6 +132,7 @@ class TestDedupService:
 
     async def test_get_total_documents(self, dedup: DedupService) -> None:
         """Total count should reflect active documents."""
+        count_before = await dedup.get_total_documents()
         await dedup.register_document(
             filename="a.pdf", file_hash="g" * 64, file_size=100,
             mime_type="application/pdf", chunk_count=1, collection_name="default",
@@ -141,4 +142,4 @@ class TestDedupService:
             mime_type="application/pdf", chunk_count=2, collection_name="default",
         )
         total = await dedup.get_total_documents()
-        assert total == 2
+        assert total == count_before + 2

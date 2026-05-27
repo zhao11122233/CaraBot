@@ -67,12 +67,12 @@ class TestUpload:
         self,
         test_client: AsyncClient,
         auth_headers: dict,
-        sample_txt_bytes: bytes,
     ) -> None:
         """Uploading with author metadata should succeed."""
+        content = b"This is a unique report by Alice.\n" * 10
         response = await test_client.post(
             "/api/v1/upload",
-            files={"file": ("report.txt", io.BytesIO(sample_txt_bytes), "text/plain")},
+            files={"file": ("report.txt", io.BytesIO(content), "text/plain")},
             data={"author": "Alice"},
             headers=auth_headers,
         )

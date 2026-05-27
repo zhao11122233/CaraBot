@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import uuid as _uuid
 from datetime import datetime, timezone
 
 from sqlalchemy import select, update
@@ -104,12 +105,18 @@ class DedupService:
             logger.info("Registered document: id=%s, filename='%s'", record.id, filename)
             return record
 
+    @staticmethod
+    def _to_uuid(doc_id: str) -> _uuid.UUID:
+        """Convert a string to UUID, handling cross-DB compatibility."""
+        return _uuid.UUID(doc_id) if isinstance(doc_id, str) else doc_id
+
     async def mark_deleted(self, doc_id: str) -> None:
         """Soft-delete a document record by setting status='deleted'."""
+        uid = self._to_uuid(doc_id)
         async with self._session_factory() as session:
             await session.execute(
                 update(DocumentRecord)
-                .where(DocumentRecord.id == doc_id)
+                .where(DocumentRecord.id == uid)
                 .values(status="deleted", updated_at=datetime.now(timezone.utc))
             )
             await session.commit()
@@ -117,9 +124,10 @@ class DedupService:
 
     async def get_document(self, doc_id: str) -> DocumentRecord | None:
         """Retrieve a document record by ID."""
+        uid = self._to_uuid(doc_id)
         async with self._session_factory() as session:
             result = await session.execute(
-                select(DocumentRecord).where(DocumentRecord.id == doc_id)
+                select(DocumentRecord).where(DocumentRecord.id == uid)
             )
             return result.scalar_one_or_none()
 
