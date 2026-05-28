@@ -2,6 +2,8 @@
 
 Enterprise multi-language RAG knowledge retrieval module — replicating the core capabilities of Transsion Carlcare AICC.
 
+[中文版 (Chinese Version)](README_zh.md)
+
 ## Features
 
 - **Multi-format document ingestion**: PDF, DOCX, Markdown, TXT
