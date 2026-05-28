@@ -1,26 +1,61 @@
 # CaraBot
 
-Enterprise multi-language RAG knowledge retrieval module — replicating the core capabilities of Transsion Carlcare AICC.
+# CaraBot: Enterprise Intelligent Knowledge Base Retrieval System
+
+Enterprise multi-language RAG knowledge retrieval system — replicating the core capabilities of Transsion Carlcare AICC.
 
 [中文版 (Chinese Version)](README_zh.md)
 
+## Overview
+
+CaraBot is an enterprise-grade intelligent knowledge base retrieval system designed to help organizations efficiently manage and retrieve information from large volumes of documents. Built on Retrieval-Augmented Generation (RAG) architecture, CaraBot provides advanced semantic search capabilities that enable employees to quickly find relevant information across diverse document formats.
+
+## Key Capabilities
+
+- **Enterprise Document Management**: Centralized repository for all organizational documents with version control and access management
+- **Multi-format Document Ingestion**: Support for PDF, DOCX, Markdown, TXT and other common document formats
+- **Advanced Semantic Retrieval**: Powered by state-of-the-art vector embeddings for accurate context-aware search
+- **Multi-language Support**: BGE-m3 model supporting Chinese, English, Swahili and other languages
+- **Dual Vector Storage**: Milvus (production-grade, scalable) / Chroma (development, lightweight) — switchable via configuration
+- **Intelligent Document Deduplication**: SHA256 hash-based deduplication with incremental update support
+- **Role-based Access Control**: Fine-grained permission management for document collections
+- **Structured Logging & Monitoring**: Per-request trace_id for distributed tracing and comprehensive health monitoring
+- **Performance Optimization**: Redis caching layer for frequent queries and result ranking optimization
+
 ## Features
 
-- **Multi-format document ingestion**: PDF, DOCX, Markdown, TXT
-- **Multi-language embeddings**: BGE-m3 supporting Chinese, English, Swahili
-- **Dual vector store**: Milvus (production) / Chroma (development) — switchable via config
-- **Document deduplication**: SHA256 hash-based with incremental update support
-- **API Key authentication**: All endpoints protected via `X-API-Key` header
-- **Structured JSON logging**: Per-request trace_id for distributed tracing
-- **Health checks**: Component-level monitoring (DB, vector store, model, Redis)
-- **Recall@k evaluation**: Built-in evaluation with per-language badcase analysis
+### 📚 Document Management
+- **Batch Document Upload**: Support for bulk ingestion of multiple documents simultaneously
+- **Document Metadata Management**: Comprehensive metadata tracking including author, collection, creation date
+- **Version Control**: Track document revisions and maintain historical versions
+- **Document Classification**: Automatic categorization based on content and metadata
+
+### 🔍 Intelligent Retrieval
+- **Semantic Search**: Context-aware search that understands user intent beyond keyword matching
+- **Multi-modal Search**: Support for text queries with potential extension to image and audio
+- **Filtered Search**: Advanced filtering by document type, author, collection, date range
+- **Result Ranking**: Intelligent ranking based on relevance score, recency, and user feedback
+- **Search Analytics**: Track search patterns and identify knowledge gaps
+
+### 🏗️ Enterprise Architecture
+- **Scalable Vector Storage**: Milvus cluster support for high-volume document repositories
+- **Distributed Processing**: Asynchronous document processing pipeline for large-scale ingestion
+- **High Availability**: Redundant components and failover mechanisms for critical operations
+- **Security**: API Key authentication, data encryption at rest and in transit
+
+### 📊 Administration & Analytics
+- **Knowledge Base Statistics**: Comprehensive metrics on document count, storage usage, search frequency
+- **Performance Monitoring**: Real-time monitoring of system health and performance metrics
+- **Audit Logs**: Detailed logging of all user actions and system operations
+- **Export Capabilities**: Export search results and analytics reports in multiple formats
 
 ## Quick Start
 
 ### Prerequisites
 
 - Python 3.10+
-- Docker & Docker Compose (for infrastructure)
+- Docker & Docker Compose (for infrastructure components)
+- Minimum 8GB RAM (16GB recommended for production use)
 
 ### 1. Clone and configure
 
@@ -71,7 +106,7 @@ curl -X POST http://localhost:8000/api/v1/upload \
   -H "X-API-Key: your-api-key" \
   -F "file=@document.pdf" \
   -F "author=John Doe" \
-  -F "collection=faq"
+  -F "collection=employee_handbook"
 ```
 
 **Response:**
@@ -95,20 +130,20 @@ Search the knowledge base.
 curl -X POST http://localhost:8000/api/v1/search \
   -H "X-API-Key: your-api-key" \
   -H "Content-Type: application/json" \
-  -d '{"query": "How to reset password?", "top_k": 5, "threshold": 0.7}'
+  -d '{"query": "How to request annual leave?", "top_k": 5, "threshold": 0.7}'
 ```
 
 **Response:**
 ```json
 {
-  "query": "How to reset password?",
+  "query": "How to request annual leave?",
   "total_results": 3,
   "results": [
     {
       "document_id": "550e8400-...",
-      "content": "To reset your password, go to Settings...",
+      "content": "To request annual leave, submit a request through the HR portal at least 2 weeks in advance...",
       "score": 0.8921,
-      "metadata": {"filename": "user_guide.pdf", "author": "Support Team"}
+      "metadata": {"filename": "employee_handbook.pdf", "author": "HR Department"}
     }
   ],
   "search_time_ms": 45.32
@@ -186,12 +221,13 @@ docker-compose up -d --build
 
 ### Production considerations
 
-1. Set a strong `API_KEY` — at least 32 random characters
-2. Use a dedicated Milvus cluster for high availability
-3. Configure PostgreSQL with replication
-4. Use a reverse proxy (nginx/Caddy) for TLS termination
-5. Set `LOG_FORMAT=json` for ELK/Loki ingestion
-6. Increase `WORKERS` based on CPU cores (typically `2 * cores + 1`)
+1. **Security Hardening**: Set a strong `API_KEY` (at least 32 random characters), configure TLS termination, implement network segmentation
+2. **Scalable Architecture**: Use a dedicated Milvus cluster with replication for high availability
+3. **Database Optimization**: Configure PostgreSQL with read replicas, connection pooling, and regular backups
+4. **Performance Tuning**: Adjust `WORKERS` based on CPU cores (typically `2 * cores + 1`), optimize Redis cache settings
+5. **Monitoring & Alerting**: Set up Prometheus/Grafana monitoring, configure alerting for critical system metrics
+6. **Disaster Recovery**: Implement regular backups for all data stores, test recovery procedures
+7. **Capacity Planning**: Monitor system usage and plan for horizontal scaling based on expected document volume
 
 ## Project Structure
 
@@ -216,6 +252,61 @@ cara-bot/
 └── README.md
 ```
 
+## Architecture Overview
+
+```mermaid
+graph TD
+    A[User] --> B[API Gateway]
+    B --> C[Authentication]
+    C --> D[Document Management]
+    C --> E[Search Service]
+    C --> F[Admin Service]
+    
+    D --> G[Document Processing]
+    D --> H[Metadata Storage]
+    G --> I[Vector Embedding]
+    I --> J[Vector Database]
+    
+    E --> I
+    E --> J
+    E --> K[Result Ranking]
+    
+    H --> L[PostgreSQL]
+    J --> M[Milvus/Chroma]
+    K --> N[Redis Cache]
+```
+
+## Application Scenarios
+
+### 🏢 Enterprise Knowledge Management
+- **Internal Wiki**: Central repository for company policies, procedures, and best practices
+- **Employee Onboarding**: New hire documentation and training materials
+- **Technical Documentation**: Software development guides, API documentation, troubleshooting manuals
+- **Sales Enablement**: Product brochures, case studies, competitive intelligence
+
+### 📊 Financial Services
+- **Document Management**: Loan agreements, compliance documents, regulatory filings
+- **Research Reports**: Market analysis, investment research, client presentations
+- **Policy Retrieval**: Insurance policies, claim procedures, coverage information
+
+### ⚖️ Legal & Compliance
+- **Contract Management**: Search and review contracts by clause, party, or obligation
+- **Regulatory Compliance**: Track compliance requirements and audit documentation
+- **Case Law Research**: Legal precedents, court rulings, and statutory references
+
+### 🏥 Healthcare
+- **Medical Records**: Secure storage and retrieval of patient records with access controls
+- **Clinical Guidelines**: Treatment protocols, drug information, and medical research
+- **Insurance Claims**: Process claims by referencing policy documents and medical records
+
 ## License
 
 Internal use.
+
+## Contributing
+
+Contributions are welcome! Please see our [Contribution Guide](CONTRIBUTING.md) for more information.
+
+## Support
+
+For support, please contact the CaraBot development team at carabot-support@example.com.

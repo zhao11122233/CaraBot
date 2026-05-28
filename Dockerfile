@@ -3,26 +3,36 @@ FROM python:3.10-slim AS builder
 
 WORKDIR /app
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc g++ make curl \
-    && rm -rf /var/lib/apt/lists/*
+# 【已修复】配置国内源
+RUN echo "deb http://mirrors.aliyun.com/debian bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list.d/aliyun.list && \
+    echo "deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list.d/aliyun.list && \
+    echo "deb http://mirrors.aliyun.com/debian bookworm-backports main contrib non-free non-free-firmware" >> /etc/apt/sources.list.d/aliyun.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list.d/aliyun.list && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        gcc g++ make curl \
+        && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# 【已修复】国内 pip 清华源，解决 torch 下载超时
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # ---- Runtime Stage ----
 FROM python:3.10-slim
 
 WORKDIR /app
 
-# Create non-root user
+# Create carabot user first (before any chown operations)
 RUN groupadd -r carabot && useradd -r -g carabot carabot
 
-# Install runtime deps only
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgomp1 curl \
-    && rm -rf /var/lib/apt/lists/*
+# 【已修复】配置国内源
+RUN echo "deb http://mirrors.aliyun.com/debian bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list.d/aliyun.list && \
+    echo "deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list.d/aliyun.list && \
+    echo "deb http://mirrors.aliyun.com/debian bookworm-backports main contrib non-free non-free-firmware" >> /etc/apt/sources.list.d/aliyun.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list.d/aliyun.list && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        libgomp1 curl \
+        && rm -rf /var/lib/apt/lists/*
 
 # Copy installed packages from builder
 COPY --from=builder /install /usr/local
@@ -31,7 +41,7 @@ COPY --from=builder /install /usr/local
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 
-# Create data and log directories
+# Create data and log directories (as root, later volumes will override)
 RUN mkdir -p /app/data/models/bge-m3 /app/data/chroma /app/logs \
     && chown -R carabot:carabot /app
 
