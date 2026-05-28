@@ -1,6 +1,6 @@
 # CaraBot
 
-企业级多语言 RAG 知识检索模块 —— 复现传音 Carlcare AICC 核心能力。
+企业级多语言 RAG 知识检索模块。
 
 ## 功能特性
 
