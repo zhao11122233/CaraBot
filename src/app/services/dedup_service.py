@@ -73,6 +73,7 @@ class DedupService:
         chunk_count: int,
         collection_name: str,
         author: str | None = None,
+        doc_id: str | None = None,
     ) -> DocumentRecord:
         """Insert a new document record into PostgreSQL.
 
@@ -84,21 +85,25 @@ class DedupService:
             chunk_count: Number of chunks created.
             collection_name: Vector store collection.
             author: Optional document author.
+            doc_id: Optional pre-generated document ID (for consistent vector store linkage).
 
         Returns:
             The newly created DocumentRecord.
         """
         async with self._session_factory() as session:
-            record = DocumentRecord(
-                filename=filename,
-                file_hash=file_hash,
-                file_size=file_size,
-                author=author,
-                mime_type=mime_type,
-                chunk_count=chunk_count,
-                collection_name=collection_name,
-                status="active",
-            )
+            kwargs: dict = {
+                "filename": filename,
+                "file_hash": file_hash,
+                "file_size": file_size,
+                "author": author,
+                "mime_type": mime_type,
+                "chunk_count": chunk_count,
+                "collection_name": collection_name,
+                "status": "active",
+            }
+            if doc_id is not None:
+                kwargs["id"] = _uuid.UUID(doc_id)
+            record = DocumentRecord(**kwargs)
             session.add(record)
             await session.commit()
             await session.refresh(record)

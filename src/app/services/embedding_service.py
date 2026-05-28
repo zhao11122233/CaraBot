@@ -46,28 +46,20 @@ class EmbeddingService:
         logger.info("Embedding model loaded. Dimension: %s", dim)
 
     def _resolve_model_path(self) -> str:
-        """Return the local model path, downloading if necessary."""
+        """Return the local model path, downloading if necessary.
+
+        Prefers a pre-downloaded local directory; falls back to the HF model name
+        which uses huggingface_hub's built-in cache.
+        """
         local_dir = Path(self._model_path)
         if local_dir.exists() and any(local_dir.iterdir()):
             logger.info("Using cached model at %s", local_dir)
             return str(local_dir)
 
-        # Create parent directory
-        local_dir.mkdir(parents=True, exist_ok=True)
-
-        logger.info("Downloading model %s to %s", self._model_name, local_dir)
-        try:
-            from sentence_transformers import SentenceTransformer
-            # Download to the local directory
-            model = SentenceTransformer(self._model_name, trust_remote_code=True)
-            model.save(str(local_dir))
-            logger.info("Model saved to %s", local_dir)
-        except Exception as exc:
-            raise EmbeddingException(
-                f"Failed to download model '{self._model_name}': {exc}"
-            ) from exc
-
-        return str(local_dir)
+        # Use model name directly — SentenceTransformer will auto-download
+        # and cache via huggingface_hub (~/.cache/huggingface/hub/)
+        logger.info("Loading model '%s' (auto-cached by HuggingFace)", self._model_name)
+        return self._model_name
 
     async def embed_documents(self, texts: list[str]) -> list[list[float]]:
         """Embed a batch of document texts.

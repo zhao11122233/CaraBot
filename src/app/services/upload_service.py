@@ -110,11 +110,10 @@ class UploadService:
             chunk.metadata["author"] = author or ""
             chunk.metadata["file_hash"] = file_hash
 
-        # Store in vector DB
-        chunk_ids = await self._vector_store.add_documents(chunks, col_name)
-        await self._vector_store.add_embeddings(chunk_ids, embeddings, col_name)
+        # Store in vector DB with BGE-m3 embeddings
+        chunk_ids = await self._vector_store.add_documents(chunks, col_name, embeddings)
 
-        # Register in PostgreSQL
+        # Register in PostgreSQL with the same doc_id used in chunk metadata
         mime = mime_type or "application/octet-stream"
         await self._dedup_service.register_document(
             filename=filename,
@@ -124,6 +123,7 @@ class UploadService:
             chunk_count=len(chunks),
             collection_name=col_name,
             author=author,
+            doc_id=doc_id,
         )
 
         logger.info(

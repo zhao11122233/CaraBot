@@ -19,7 +19,8 @@ class BaseVectorStore(ABC):
 
     @abstractmethod
     async def add_documents(
-        self, documents: list[Document], collection: str | None = None
+        self, documents: list[Document], collection: str | None = None,
+        embeddings: list[list[float]] | None = None,
     ) -> list[str]:
         """Embed and store documents, returning their chunk IDs.
 

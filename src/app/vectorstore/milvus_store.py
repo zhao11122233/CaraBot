@@ -91,11 +91,11 @@ class MilvusStore(BaseVectorStore):
         schema = CollectionSchema(fields, description="CaraBot knowledge base")
         collection = Collection(collection_name, schema=schema)
 
-        # Build IVF_FLAT index
+        # Build FLAT index (exact search, suitable for all dataset sizes)
         index_params = {
             "metric_type": "IP",
-            "index_type": "IVF_FLAT",
-            "params": {"nlist": 1024},
+            "index_type": "FLAT",
+            "params": {},
         }
         collection.create_index(VECTOR_FIELD, index_params)
         collection.load()
@@ -103,7 +103,8 @@ class MilvusStore(BaseVectorStore):
         return collection
 
     async def add_documents(
-        self, documents: list[Document], collection: str | None = None
+        self, documents: list[Document], collection: str | None = None,
+        embeddings: list[list[float]] | None = None,
     ) -> list[str]:
         await self._ensure_connected()
         col_name = collection or self._default_collection
@@ -111,12 +112,12 @@ class MilvusStore(BaseVectorStore):
         chunk_ids: list[str] = []
         data_rows: list[dict[str, Any]] = []
 
-        for doc in documents:
+        for i, doc in enumerate(documents):
             chunk_id = str(uuid.uuid4())
             chunk_ids.append(chunk_id)
             data_rows.append({
                 ID_FIELD: chunk_id,
-                VECTOR_FIELD: [],  # placeholder, real embedding inserted separately
+                VECTOR_FIELD: embeddings[i] if embeddings else [],
                 TEXT_FIELD: doc.page_content,
                 DOC_ID_FIELD: doc.metadata.get("document_id", ""),
                 METADATA_FIELD: doc.metadata,
@@ -124,7 +125,6 @@ class MilvusStore(BaseVectorStore):
 
         def _insert() -> None:
             col = self._get_collection(col_name)
-            # Insert without vectors first (vectors embedded upstream)
             col.insert(data_rows)
             col.flush()
 

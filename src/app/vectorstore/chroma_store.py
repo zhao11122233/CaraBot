@@ -56,7 +56,10 @@ class ChromaStore(BaseVectorStore):
             )
 
     async def add_documents(
-        self, documents: list[Document], collection: str | None = None
+        self,
+        documents: list[Document],
+        collection: str | None = None,
+        embeddings: list[list[float]] | None = None,
     ) -> list[str]:
         col_name = collection or self._default_collection
         col = self._get_or_create_collection(col_name)
@@ -71,7 +74,15 @@ class ChromaStore(BaseVectorStore):
             texts.append(doc.page_content)
             metadatas.append({**doc.metadata, "chunk_id": cid})
 
-        col.add(documents=texts, metadatas=metadatas, ids=chunk_ids)
+        if embeddings:
+            col.add(
+                documents=texts,
+                metadatas=metadatas,
+                ids=chunk_ids,
+                embeddings=embeddings,
+            )
+        else:
+            col.add(documents=texts, metadatas=metadatas, ids=chunk_ids)
         logger.info("Added %d chunks to Chroma collection '%s'", len(chunk_ids), col_name)
         return chunk_ids
 
@@ -83,8 +94,6 @@ class ChromaStore(BaseVectorStore):
     ) -> None:
         col_name = collection or self._default_collection
         col = self._get_or_create_collection(col_name)
-
-        # Update existing documents with embeddings
         col.update(ids=chunk_ids, embeddings=embeddings)
         logger.info("Updated %d embeddings in Chroma collection '%s'", len(chunk_ids), col_name)
 
