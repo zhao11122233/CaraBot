@@ -1,4 +1,4 @@
-# CaraBot: Enterprise Intelligent Knowledge Base Retrieval System
+# CaraBot: Agent-Powered Intelligent Knowledge Base System
 
 [![GitHub Stars](https://img.shields.io/github/stars/your-username/carabot?style=flat-square)](https://github.com/your-username/carabot)
 [![GitHub Issues](https://img.shields.io/github/issues/your-username/carabot?style=flat-square)](https://github.com/your-username/carabot/issues)
@@ -7,17 +7,27 @@
 
 ## 📖 Overview
 
-CaraBot is an enterprise-grade intelligent knowledge base retrieval system designed to help organizations efficiently manage and retrieve information from large volumes of documents. Built on Retrieval-Augmented Generation (RAG) architecture, CaraBot provides advanced semantic search capabilities that enable employees to quickly find relevant information across diverse document formats.
+CaraBot is an Agent-powered intelligent knowledge base system built on LangGraph and RAG (Retrieval-Augmented Generation) architecture. It combines semantic search with LLM-driven conversational AI, enabling natural language interaction with your document corpus. The built-in ReAct agent can autonomously search, retrieve, and ingest documents to answer user queries accurately and efficiently.
 
 ### ✨ Key Advantages
 
 - 🚀 **High Performance**: Based on FastAPI and Milvus vector database, supporting high-concurrency retrieval
+- 🤖 **Agent-Powered**: LangGraph ReAct agent with tool-calling for autonomous knowledge base interaction
+- 💬 **Conversational AI**: Multi-turn dialogue with streaming SSE responses via OpenAI-compatible LLMs
 - 🌐 **Multi-language Support**: Supports Chinese, English, Swahili, and other languages
 - 📚 **Multi-format Support**: Supports PDF, DOCX, Markdown, TXT, and other common document formats
 - 🔒 **Enterprise-grade Security**: Provides API Key authentication, data encryption, and other security features
 - 📊 **Scalable**: Modular design, supporting flexible extension and customization
 
 ## 🎯 Features
+
+### 🤖 Agent Conversation
+
+- 💬 **Natural Language Chat**: Converse with your knowledge base via `POST /api/v1/chat`
+- 🔧 **Tool Calling**: Agent autonomously calls search, stats, and ingest tools as needed
+- 🔄 **Multi-turn Dialogue**: Persistent conversation state via PostgreSQL checkpoints (thread_id)
+- ⚡ **Streaming SSE**: Real-time token streaming for responsive chat experiences
+- 🔌 **Flexible LLM**: Compatible with OpenAI, DeepSeek, Qwen, vLLM, and any OpenAI-compatible API
 
 ### 📚 Document Management
 
@@ -96,22 +106,30 @@ curl http://localhost:8000/health
 graph TD
     A[User] --> B[API Gateway]
     B --> C[Authentication Middleware]
-    C --> D[Document Management]
-    C --> E[Search Service]
-    C --> F[Admin Service]
+    C --> D[Chat API]
+    C --> E[Document Management]
+    C --> F[Search API]
+    C --> G[Stats API]
     
-    D --> G[Document Processing]
-    D --> H[Metadata Storage]
-    G --> I[Vector Embedding]
-    I --> J[Vector Database]
+    D --> H[LangGraph Agent]
+    H --> I[LLM Provider]
+    H --> J[Tools]
+    J --> K[Search Service]
+    J --> L[Stats Service]
+    J --> M[Upload Service]
     
-    E --> I
-    E --> J
-    E --> K[Result Ranking]
+    E --> N[Document Processing]
+    E --> O[Metadata Storage]
+    N --> P[Vector Embedding]
+    P --> Q[Vector Database]
     
-    H --> L[PostgreSQL]
-    J --> M[Milvus/Chroma]
-    K --> N[Redis Cache]
+    K --> P
+    K --> Q
+    M --> N
+    
+    O --> R[PostgreSQL]
+    Q --> S[Milvus/Chroma]
+    H --> R
 ```
 
 ### 🧩 Technology Stack
@@ -119,8 +137,10 @@ graph TD
 | Component | Technology | Description |
 |-----------|------------|-------------|
 | Web Framework | FastAPI | High-performance asynchronous web framework |
+| Agent Framework | LangGraph | ReAct agent with state graph orchestration and checkpoint persistence |
+| LLM Integration | OpenAI-compatible API | Supports OpenAI, DeepSeek, Qwen, vLLM, and any compatible provider |
 | Vector Database | Milvus/Chroma | Production-grade vector database / Development-grade vector database |
-| Relational Database | PostgreSQL | Enterprise-grade relational database |
+| Relational Database | PostgreSQL | Enterprise-grade relational database + agent conversation checkpoints |
 | Cache | Redis | High-performance caching system |
 | Vector Embedding | BGE-M3 | Multi-language vector embedding model |
 | Document Processing | PyPDF2, python-docx | Multi-format document parsing |
@@ -172,6 +192,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [FastAPI](https://fastapi.tiangolo.com/) - High-performance asynchronous web framework
 - [Milvus](https://milvus.io/) - Open-source vector database
 - [LangChain](https://langchain.com/) - LLM application development framework
+- [LangGraph](https://langchain-ai.github.io/langgraph/) - Agent orchestration framework
 - [BGE-M3](https://github.com/FlagOpen/FlagEmbedding) - Multi-language vector embedding model
 
 ## 📞 Contact

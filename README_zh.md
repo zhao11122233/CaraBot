@@ -1,4 +1,4 @@
-# CaraBot: 企业级智能知识库检索系统
+# CaraBot: Agent 驱动的智能知识库系统
 
 [![GitHub Stars](https://img.shields.io/github/stars/your-username/carabot?style=flat-square)](https://github.com/your-username/carabot)
 [![GitHub Issues](https://img.shields.io/github/issues/your-username/carabot?style=flat-square)](https://github.com/your-username/carabot/issues)
@@ -7,17 +7,27 @@
 
 ## 📖 项目概述
 
-CaraBot 是一款面向企业场景的智能知识库检索系统，旨在帮助组织高效管理和检索海量文档信息。基于 Retrieval-Augmented Generation (RAG) 架构，CaraBot 提供先进的语义搜索能力，使员工能够快速在多样化的文档格式中找到相关信息。
+CaraBot 是一个基于 LangGraph 和 RAG（检索增强生成）架构的 Agent 驱动智能知识库系统。它将语义搜索与 LLM 驱动的对话 AI 相结合，支持自然语言与文档库交互。内置的 ReAct Agent 能够自主搜索、检索和摄入文档，准确高效地回答用户查询。
 
 ### ✨ 核心优势
 
 - 🚀 **高性能**：基于 FastAPI 和 Milvus 向量数据库，支持高并发检索
+- 🤖 **Agent 驱动**：LangGraph ReAct Agent，具备工具调用能力，自主操作知识库
+- 💬 **对话式 AI**：支持多轮对话，通过 SSE 流式输出，兼容 OpenAI 接口的 LLM
 - 🌐 **多语言支持**：支持中文、英文、斯瓦希里语等多种语言
 - 📚 **多格式支持**：支持 PDF、DOCX、Markdown、TXT 等常见文档格式
 - 🔒 **企业级安全**：提供 API Key 认证、数据加密等安全特性
 - 📊 **可扩展**：模块化设计，支持灵活扩展和定制
 
 ## 🎯 功能特性
+
+### 🤖 Agent 对话
+
+- 💬 **自然语言对话**：通过 `POST /api/v1/chat` 与知识库对话交互
+- 🔧 **工具调用**：Agent 自主调用搜索、统计、文本入录等工具完成用户需求
+- 🔄 **多轮对话**：基于 PostgreSQL Checkpoint 持久化对话状态（thread_id）
+- ⚡ **流式 SSE**：实时 token 级流式输出，即时响应
+- 🔌 **灵活 LLM**：兼容 OpenAI、DeepSeek、Qwen、vLLM 等所有 OpenAI 兼容接口
 
 ### 📚 文档管理
 
@@ -96,22 +106,30 @@ curl http://localhost:8000/health
 graph TD
     A[用户] --> B[API 网关]
     B --> C[认证中间件]
-    C --> D[文档管理服务]
-    C --> E[搜索服务]
-    C --> F[管理服务]
+    C --> D[Chat 对话接口]
+    C --> E[文档管理服务]
+    C --> F[搜索接口]
+    C --> G[统计接口]
     
-    D --> G[文档处理]
-    D --> H[元数据存储]
-    G --> I[向量嵌入]
-    I --> J[向量数据库]
+    D --> H[LangGraph Agent]
+    H --> I[LLM 提供者]
+    H --> J[工具]
+    J --> K[搜索服务]
+    J --> L[统计服务]
+    J --> M[上传服务]
     
-    E --> I
-    E --> J
-    E --> K[结果排序]
+    E --> N[文档处理]
+    E --> O[元数据存储]
+    N --> P[向量嵌入]
+    P --> Q[向量数据库]
     
-    H --> L[PostgreSQL]
-    J --> M[Milvus/Chroma]
-    K --> N[Redis 缓存]
+    K --> P
+    K --> Q
+    M --> N
+    
+    O --> R[PostgreSQL]
+    Q --> S[Milvus/Chroma]
+    H --> R
 ```
 
 ### 🧩 技术栈
@@ -119,8 +137,10 @@ graph TD
 | 组件 | 技术栈 | 说明 |
 |------|--------|------|
 | Web 框架 | FastAPI | 高性能异步 Web 框架 |
+| Agent 框架 | LangGraph | ReAct Agent 状态图编排 + Checkpoint 持久化 |
+| LLM 集成 | OpenAI 兼容接口 | 支持 OpenAI、DeepSeek、Qwen、vLLM 等 |
 | 向量数据库 | Milvus/Chroma | 生产级向量数据库/开发级向量数据库 |
-| 关系数据库 | PostgreSQL | 企业级关系数据库 |
+| 关系数据库 | PostgreSQL | 企业级关系数据库 + Agent 对话 Checkpoint |
 | 缓存 | Redis | 高性能缓存系统 |
 | 向量嵌入 | BGE-M3 | 多语言向量嵌入模型 |
 | 文档处理 | PyPDF2、python-docx | 多格式文档解析 |
@@ -172,6 +192,7 @@ graph TD
 - [FastAPI](https://fastapi.tiangolo.com/) - 高性能异步 Web 框架
 - [Milvus](https://milvus.io/) - 开源向量数据库
 - [LangChain](https://langchain.com/) - LLM 应用开发框架
+- [LangGraph](https://langchain-ai.github.io/langgraph/) - Agent 编排框架
 - [BGE-M3](https://github.com/FlagOpen/FlagEmbedding) - 多语言向量嵌入模型
 
 ## 📞 联系方式
