@@ -176,9 +176,7 @@ graph TD
 
 ## 📞 联系方式
 
-- 📧 邮箱：carabot-support@example.com
-- 🌐 官网：https://carabot.example.com
-- 📱 GitHub：https://github.com/your-username/carabot
+- 📱 GitHub：https://github.com/zhao111222333/carabot
 
 ---
 

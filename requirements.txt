@@ -32,6 +32,13 @@ pydantic>=2.0.0
 pydantic-settings>=2.0.0
 python-dotenv>=1.0.0
 
+# Agent & LLM
+langgraph>=0.2.0
+langgraph-checkpoint-postgres>=1.0.0
+langchain-openai>=0.2.0
+openai>=1.50.0
+sse-starlette>=2.0.0
+
 # Utilities
 python-json-logger>=2.0.0
 httpx>=0.28.0

@@ -178,7 +178,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - 📧 Email: carabot-support@example.com
 - 🌐 Website: https://carabot.example.com
-- 📱 GitHub: https://github.com/your-username/carabot
+- 📱 GitHub: https://github.com/zhao111222333/carabot
 
 ---
 

@@ -18,11 +18,13 @@ from src.app.middleware.auth import AuthGuard
 from src.app.middleware.error_handler import register_error_handlers
 from src.app.middleware.logging import RequestLoggingMiddleware
 from src.app.models import create_engine_and_session
+from src.app.services.agent_service import AgentService
 from src.app.services.dedup_service import DedupService
 from src.app.services.document_processor import DocumentProcessor
 from src.app.services.embedding_service import EmbeddingService
 from src.app.services.search_service import SearchService
 from src.app.services.stats_service import StatsService
+from src.app.services.tools import create_tools
 from src.app.services.upload_service import UploadService
 from src.app.vectorstore import get_vector_store
 
@@ -64,6 +66,12 @@ def create_app() -> FastAPI:
     )
     search_service = SearchService(settings, embedding_service, vector_store)
     stats_service = StatsService(settings, dedup_service, vector_store)
+
+    # Initialize agent service (LangGraph + LLM)
+    tools = create_tools(search_service, stats_service, upload_service)
+    agent_service = AgentService(
+        settings, tools, search_service, stats_service, upload_service,
+    )
 
     # Initialize auth guard
     auth_guard = AuthGuard(settings)
@@ -115,6 +123,14 @@ def create_app() -> FastAPI:
             errors.append(f"Embedding model: {exc}")
             logger.error("  [FAIL] Embedding model: %s", exc)
 
+        # Initialize agent service
+        try:
+            await agent_service.startup()
+            logger.info("  [OK] Agent service initialized")
+        except Exception as exc:
+            errors.append(f"Agent service: {exc}")
+            logger.error("  [FAIL] Agent service: %s", exc)
+
         # Check Redis
         try:
             import redis.asyncio as aioredis
@@ -135,6 +151,7 @@ def create_app() -> FastAPI:
 
         # Shutdown
         logger.info("Shutting down CaraBot...")
+        await agent_service.shutdown()
         await db_engine.dispose()
         logger.info("CaraBot shutdown complete.")
 
@@ -161,6 +178,7 @@ def create_app() -> FastAPI:
         vector_store,
         embedding_service,
         settings.redis_url,
+        agent_service,
     )
 
     return app

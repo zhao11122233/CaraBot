@@ -106,6 +106,47 @@ class Settings(BaseSettings):
         default="json", description="Log output format: json or text"
     )
 
+    # --- LLM Configuration ---
+    llm_base_url: str = Field(
+        default="http://localhost:8000/v1",
+        description="OpenAI-compatible API base URL (OpenAI, DeepSeek, Qwen, vLLM, etc.)",
+    )
+    llm_api_key: str = Field(
+        default="not-needed",
+        description="API key for the LLM provider",
+    )
+    llm_model: str = Field(
+        default="gpt-4o-mini",
+        description="Model name for the OpenAI-compatible API",
+    )
+    llm_temperature: float = Field(
+        default=0.1, ge=0.0, le=2.0, description="LLM temperature for response generation"
+    )
+    llm_max_tokens: int = Field(
+        default=2048, ge=1, le=16384, description="Maximum tokens in LLM response"
+    )
+
+    # --- Agent Configuration ---
+    agent_max_iterations: int = Field(
+        default=10, ge=1, le=50,
+        description="Maximum number of agent reasoning loops",
+    )
+    agent_system_prompt: str = Field(
+        default=(
+            "You are CaraBot, a helpful RAG-based knowledge assistant. "
+            "You can search the knowledge base, check document statistics, "
+            "and ingest new text documents. "
+            "Always cite specific documents when answering from search results. "
+            "Be concise and accurate."
+        ),
+        description="System prompt for the LangGraph agent",
+    )
+    agent_checkpoint_db_url: str = Field(
+        default="",
+        description="Sync PostgreSQL URL for LangGraph checkpoints. "
+                    "Defaults to a derived sync URL from DB_URL if left empty.",
+    )
+
     # --- Server ---
     host: str = Field(default="0.0.0.0", description="Server bind address")
     port: int = Field(default=8000, ge=1, le=65535, description="Server port")
