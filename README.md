@@ -64,8 +64,6 @@ Agent 应用开发、AI 应用开发、大语言模型应用、LLM 应用、RAG 
 
 CaraBot 提供完整的 FastAPI Swagger UI 文档界面，你可以在 `http://localhost:8000/docs` 访问交互式 API 文档，直接在浏览器中测试所有 API 端点。
 
-![FastAPI Swagger UI](https://via.placeholder.com/800x400/68a063/ffffff?text=FastAPI+Swagger+UI+Documentation)
-
 ## 🚀 快速开始
 
 ### 📋 环境要求
