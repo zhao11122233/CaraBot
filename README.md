@@ -60,6 +60,12 @@ Agent 应用开发、AI 应用开发、大语言模型应用、LLM 应用、RAG 
 - 🛡️ **高可用性**：冗余组件和故障转移机制，确保关键操作的可靠性
 - 🔒 **安全可靠**：API Key 认证、数据加密（静态和传输中）
 
+## 📸 API 文档预览
+
+![FastAPI Swagger UI](https://trae-api-cn.mchost.guru/api/ide/v1/text-to-image?prompt=FastAPI%20Swagger%20UI%20API%20documentation%20interface%2C%20showing%20API%20endpoints%20like%20health%2C%20upload%2C%20search%2C%20stats%2C%20chat%2C%20clean%20white%20background%2C%20professional%20design&image_size=landscape_4_3)
+
+CaraBot 提供完整的 FastAPI Swagger UI 文档界面，你可以在 `http://localhost:8000/docs` 访问交互式 API 文档，直接在浏览器中测试所有 API 端点。
+
 ## 🚀 快速开始
 
 ### 📋 环境要求

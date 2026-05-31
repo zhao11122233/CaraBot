@@ -60,6 +60,12 @@ Agent Application Development, AI Application Development, Large Language Model 
 - 🛡️ **High Availability**: Redundant components and failover mechanisms for reliable critical operations
 - 🔒 **Secure**: API Key authentication, data encryption at rest and in transit
 
+## 📸 API Documentation Preview
+
+![FastAPI Swagger UI](https://trae-api-cn.mchost.guru/api/ide/v1/text-to-image?prompt=FastAPI%20Swagger%20UI%20API%20documentation%20interface%2C%20showing%20API%20endpoints%20like%20health%2C%20upload%2C%20search%2C%20stats%2C%20chat%2C%20clean%20white%20background%2C%20professional%20design&image_size=landscape_4_3)
+
+CaraBot provides a complete FastAPI Swagger UI documentation interface. You can access the interactive API documentation at `http://localhost:8000/docs` to test all API endpoints directly in your browser.
+
 ## 🚀 Quick Start
 
 ### 📋 Prerequisites
