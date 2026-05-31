@@ -8,17 +8,21 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
+# 创建 FastAPI 应用
 app = FastAPI(title="用户管理API", version="6.0.0")
 
 
+# 模拟数据库类
 class MockDatabase:
     def __init__(self):
-        self.users = {}
-        self.next_id = 1
+        self.users = {}  # 存储用户数据
+        self.next_id = 1  # 下一个用户ID
 
+    # 根据ID获取用户
     def get_user(self, user_id: int):
         return self.users.get(user_id)
 
+    # 创建新用户
     def create_user(self, user_data: dict):
         user_id = self.next_id
         now = datetime.utcnow()
@@ -32,6 +36,7 @@ class MockDatabase:
         self.next_id += 1
         return user
 
+    # 更新用户
     def update_user(self, user_id: int, user_data: dict):
         if user_id not in self.users:
             return None
@@ -40,17 +45,20 @@ class MockDatabase:
         user["updated_at"] = datetime.utcnow()
         return user
 
+    # 删除用户
     def delete_user(self, user_id: int):
         if user_id in self.users:
             del self.users[user_id]
             return True
         return False
 
+    # 获取用户列表（分页）
     def list_users(self, skip: int = 0, limit: int = 10):
         users = list(self.users.values())
         return users[skip: skip + limit]
 
 
+# 依赖注入函数：获取数据库连接
 def get_db():
     db = MockDatabase()
     db.create_user({"name": "张三", "email": "zhangsan@example.com", "age": 25})
@@ -58,6 +66,7 @@ def get_db():
     yield db
 
 
+# 响应模型
 class UserResponse(BaseModel):
     user_id: int
     name: str
@@ -70,18 +79,21 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
+# 请求体模型：创建用户
 class UserCreate(BaseModel):
     name: str = Field(..., min_length=2, max_length=50)
     email: str = Field(..., min_length=5, max_length=100)
     age: Optional[int] = Field(None, ge=0, le=150)
 
 
+# 请求体模型：更新用户
 class UserUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=2, max_length=50)
     email: Optional[str] = Field(None, min_length=5, max_length=100)
     age: Optional[int] = Field(None, ge=0, le=150)
 
 
+# GET：获取用户列表（summary：接口描述，显示在文档中）
 @app.get("/users", response_model=List[UserResponse], summary="获取用户列表")
 async def get_users(
     skip: int = Query(0, ge=0, description="跳过数量"),
@@ -92,6 +104,7 @@ async def get_users(
     return [UserResponse(**user) for user in users]
 
 
+# GET：获取单个用户
 @app.get("/users/{user_id}", response_model=UserResponse, summary="获取单个用户")
 async def get_user(
     user_id: int = Path(..., ge=1, description="用户ID"),
@@ -106,6 +119,7 @@ async def get_user(
     return UserResponse(**user)
 
 
+# POST：创建用户
 @app.post("/users", response_model=UserResponse, status_code=201, summary="创建用户")
 async def create_user(
     user: UserCreate,
@@ -115,6 +129,7 @@ async def create_user(
     return UserResponse(**new_user)
 
 
+# PUT：修改用户
 @app.put("/users/{user_id}", response_model=UserResponse, summary="更新用户")
 async def update_user(
     user_id: int = Path(..., ge=1, description="用户ID"),
@@ -131,6 +146,7 @@ async def update_user(
     return UserResponse(**updated_user)
 
 
+# DELETE：删除用户
 @app.delete("/users/{user_id}", status_code=204, summary="删除用户")
 async def delete_user(
     user_id: int = Path(..., ge=1, description="用户ID"),
@@ -145,6 +161,7 @@ async def delete_user(
     return None
 
 
+# 健康检查接口（生产环境常用）
 @app.get("/health", summary="健康检查")
 async def health_check():
     return {
@@ -153,6 +170,7 @@ async def health_check():
     }
 
 
+# FastAPI vs Spring Boot 对比接口（学习用）
 @app.get("/fastapi-vs-springboot", summary="FastAPI vs Spring Boot 对比")
 async def compare_frameworks():
     return {

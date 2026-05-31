@@ -8,23 +8,27 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
+# 创建 FastAPI 应用
 app = FastAPI(title="用户管理API", version="4.0.0")
 
 
+# 模拟数据库类（不需要真正的数据库）
 class MockDatabase:
     def __init__(self):
-        self.users = {}
-        self.next_id = 1
+        self.users = {}  # 存储用户数据
+        self.next_id = 1  # 下一个用户ID
 
+    # 根据ID获取用户
     def get_user(self, user_id: int):
         return self.users.get(user_id)
 
+    # 创建新用户
     def create_user(self, user_data: dict):
         user_id = self.next_id
         now = datetime.utcnow()
         user = {
             "user_id": user_id,
-            **user_data,
+            **user_data,  # 展开用户数据
             "created_at": now,
             "updated_at": now
         }
@@ -32,6 +36,7 @@ class MockDatabase:
         self.next_id += 1
         return user
 
+    # 更新用户
     def update_user(self, user_id: int, user_data: dict):
         if user_id not in self.users:
             return None
@@ -40,24 +45,29 @@ class MockDatabase:
         user["updated_at"] = datetime.utcnow()
         return user
 
+    # 删除用户
     def delete_user(self, user_id: int):
         if user_id in self.users:
             del self.users[user_id]
             return True
         return False
 
+    # 获取用户列表（分页）
     def list_users(self, skip: int = 0, limit: int = 10):
         users = list(self.users.values())
         return users[skip: skip + limit]
 
 
+# 依赖注入函数：获取数据库连接
 def get_db():
     db = MockDatabase()
+    # 初始化两个测试用户
     db.create_user({"name": "张三", "email": "zhangsan@example.com", "age": 25})
     db.create_user({"name": "李四", "email": "lisi@example.com", "age": 30})
-    yield db
+    yield db  # yield：生成器，请求结束后自动清理
 
 
+# 响应模型
 class UserResponse(BaseModel):
     user_id: int
     name: str
@@ -70,28 +80,32 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
+# 请求体模型：创建用户
 class UserCreate(BaseModel):
     name: str = Field(..., min_length=2, max_length=50)
     email: str = Field(..., min_length=5, max_length=100)
     age: Optional[int] = Field(None, ge=0, le=150)
 
 
+# 请求体模型：更新用户
 class UserUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=2, max_length=50)
     email: Optional[str] = Field(None, min_length=5, max_length=100)
     age: Optional[int] = Field(None, ge=0, le=150)
 
 
+# GET：获取用户列表（Depends：注入数据库依赖）
 @app.get("/users", response_model=List[UserResponse])
 async def get_users(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
-    db: MockDatabase = Depends(get_db)
+    db: MockDatabase = Depends(get_db)  # 自动注入数据库
 ):
     users = db.list_users(skip=skip, limit=limit)
     return [UserResponse(**user) for user in users]
 
 
+# GET：获取单个用户
 @app.get("/users/{user_id}", response_model=UserResponse)
 async def get_user(
     user_id: int = Path(..., ge=1),
@@ -100,6 +114,7 @@ async def get_user(
     user = db.get_user(user_id)
     if user:
         return UserResponse(**user)
+    # 用户不存在时返回默认值
     return UserResponse(
         user_id=user_id,
         name="未知用户",
@@ -109,6 +124,7 @@ async def get_user(
     )
 
 
+# POST：创建用户
 @app.post("/users", response_model=UserResponse, status_code=201)
 async def create_user(
     user: UserCreate,
@@ -119,6 +135,7 @@ async def create_user(
     return UserResponse(**new_user)
 
 
+# PUT：修改用户
 @app.put("/users/{user_id}", response_model=UserResponse)
 async def update_user(
     user_id: int = Path(..., ge=1),
@@ -133,11 +150,12 @@ async def update_user(
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow()
         )
-    update_data = user_update.model_dump(exclude_unset=True)
+    update_data = user_update.model_dump(exclude_unset=True)  # 只更新提供的字段
     updated_user = db.update_user(user_id, update_data)
     return UserResponse(**updated_user)
 
 
+# DELETE：删除用户
 @app.delete("/users/{user_id}", status_code=204)
 async def delete_user(
     user_id: int = Path(..., ge=1),
