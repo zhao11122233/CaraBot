@@ -35,7 +35,7 @@ RUN rm -rf /etc/apt/sources.list.d/* && \
     echo "deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list && \
     echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list && \
     apt-get update && apt-get install -y --no-install-recommends \
-        libgomp1 curl \
+        libgomp1 curl libpq5 \
         && rm -rf /var/lib/apt/lists/*
 
 # Copy installed packages from builder
