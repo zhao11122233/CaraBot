@@ -62,7 +62,7 @@ Agent 应用开发、AI 应用开发、大语言模型应用、LLM 应用、RAG 
 
 ## 📸 API 文档预览
 
-![FastAPI Swagger UI](https://trae-api-cn.mchost.guru/api/ide/v1/text-to-image?prompt=FastAPI%20Swagger%20UI%20interface%20showing%20API%20endpoints%2C%20GET%20POST%20PUT%20DELETE%20buttons%2C%20API%20documentation%20screen%2C%20modern%20web%20interface&image_size=landscape_4_3)
+![FastAPI Swagger UI](https://fastapi.tiangolo.com/img/tutorial/tutorial-001.png)
 
 CaraBot 提供完整的 FastAPI Swagger UI 文档界面，你可以在 `http://localhost:8000/docs` 访问交互式 API 文档，直接在浏览器中测试所有 API 端点。
 
