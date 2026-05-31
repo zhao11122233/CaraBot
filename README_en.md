@@ -62,9 +62,9 @@ Agent Application Development, AI Application Development, Large Language Model 
 
 ## 📸 API Documentation Preview
 
-![FastAPI Swagger UI](https://fastapi.tiangolo.com/img/tutorial/tutorial-001.png)
-
 CaraBot provides a complete FastAPI Swagger UI documentation interface. You can access the interactive API documentation at `http://localhost:8000/docs` to test all API endpoints directly in your browser.
+
+![FastAPI Swagger UI](https://via.placeholder.com/800x400/68a063/ffffff?text=FastAPI+Swagger+UI+Documentation)
 
 ## 🚀 Quick Start
 
