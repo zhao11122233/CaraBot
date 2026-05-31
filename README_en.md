@@ -198,6 +198,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [LangChain](https://langchain.com/) - LLM application development framework
 - [LangGraph](https://langchain-ai.github.io/langgraph/) - Agent orchestration framework
 - [BGE-M3](https://github.com/FlagOpen/FlagEmbedding) - Multi-language vector embedding model
+- [Star History](https://star-history.com) - Star history chart generator
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=zhao11122233/CaraBot&type=Date)](https://star-history.com/#zhao11122233/CaraBot&Date)
 
 ## 📞 Contact
 

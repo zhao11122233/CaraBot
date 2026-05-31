@@ -198,6 +198,11 @@ graph TD
 - [LangChain](https://langchain.com/) - LLM 应用开发框架
 - [LangGraph](https://langchain-ai.github.io/langgraph/) - Agent 编排框架
 - [BGE-M3](https://github.com/FlagOpen/FlagEmbedding) - 多语言向量嵌入模型
+- [Star History](https://star-history.com) - 星标历史图生成工具
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=zhao11122233/CaraBot&type=Date)](https://star-history.com/#zhao11122233/CaraBot&Date)
 
 ## 📞 联系方式
 
