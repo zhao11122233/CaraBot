@@ -1,4 +1,4 @@
-# CaraBot: Agent-Powered Intelligent Knowledge Base System
+# CaraBot: Agent-Powered Intelligent Knowledge Base System | Agent Application Development | AI Application Development | LLM Application
 
 [![GitHub Stars](https://img.shields.io/github/stars/zhao11122233/CaraBot?style=flat-square)](https://github.com/zhao11122233/CaraBot)
 [![GitHub Issues](https://img.shields.io/github/issues/zhao11122233/CaraBot?style=flat-square)](https://github.com/zhao11122233/CaraBot/issues)
@@ -12,6 +12,12 @@
 ## 📖 Overview
 
 CaraBot is an Agent-powered intelligent knowledge base system built on LangGraph and RAG (Retrieval-Augmented Generation) architecture. It combines semantic search with LLM-driven conversational AI, enabling natural language interaction with your document corpus. The built-in ReAct agent can autonomously search, retrieve, and ingest documents to answer user queries accurately and efficiently.
+
+> 📚 **Complete Course Materials**: This project comes with comprehensive course materials, from FastAPI basics to LangGraph Agent development, step-by-step, perfect for AI application development beginners. Course files include detailed tutorials, code examples, and learning guides.
+
+### 🔑 Keywords
+
+Agent Application Development, AI Application Development, Large Language Model Application, LLM Application, RAG Application, Knowledge Base System, Intelligent QA System, Semantic Search, Vector Database, FastAPI, LangChain, LangGraph, ReAct Agent
 
 ### ✨ Key Advantages
 

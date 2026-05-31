@@ -1,4 +1,4 @@
-# CaraBot: Agent 驱动的智能知识库系统
+# CaraBot: Agent 驱动的智能知识库系统 | Agent 应用开发 | AI 应用开发 | 大语言模型应用
 
 [![GitHub Stars](https://img.shields.io/github/stars/zhao11122233/CaraBot?style=flat-square)](https://github.com/zhao11122233/CaraBot)
 [![GitHub Issues](https://img.shields.io/github/issues/zhao11122233/CaraBot?style=flat-square)](https://github.com/zhao11122233/CaraBot/issues)
@@ -12,6 +12,12 @@
 ## 📖 项目概述
 
 CaraBot 是一个基于 LangGraph 和 RAG（检索增强生成）架构的 Agent 驱动智能知识库系统。它将语义搜索与 LLM 驱动的对话 AI 相结合，支持自然语言与文档库交互。内置的 ReAct Agent 能够自主搜索、检索和摄入文档，准确高效地回答用户查询。
+
+> 📚 **配套课程资料**：本项目附有完整的课程资料，从 FastAPI 基础到 LangGraph Agent 开发，循序渐进，适合 AI 应用开发初学者学习。课程文件包含详细教程、代码示例和学习指南。
+
+### 🔑 关键词
+
+Agent 应用开发、AI 应用开发、大语言模型应用、LLM 应用、RAG 应用、知识库系统、智能问答系统、语义搜索、向量数据库、FastAPI、LangChain、LangGraph、ReAct Agent
 
 ### ✨ 核心优势
 
