@@ -1,8 +1,8 @@
 # CaraBot: Agent-Powered Intelligent Knowledge Base System
 
-[![GitHub Stars](https://img.shields.io/github/stars/zhao111222333/carabot?style=flat-square)](https://github.com/zhao111222333/carabot)
-[![GitHub Issues](https://img.shields.io/github/issues/zhao111222333/carabot?style=flat-square)](https://github.com/zhao111222333/carabot/issues)
-[![GitHub License](https://img.shields.io/github/license/zhao111222333/carabot?style=flat-square)](https://github.com/zhao111222333/carabot/blob/main/LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/zhao11122233/CaraBot?style=flat-square)](https://github.com/zhao11122233/CaraBot)
+[![GitHub Issues](https://img.shields.io/github/issues/zhao11122233/CaraBot?style=flat-square)](https://github.com/zhao11122233/CaraBot/issues)
+[![GitHub License](https://img.shields.io/github/license/zhao11122233/CaraBot?style=flat-square)](https://github.com/zhao11122233/CaraBot/blob/main/LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.10+-blue?style=flat-square)](https://python.org)
 
 ---
@@ -67,7 +67,7 @@ CaraBot is an Agent-powered intelligent knowledge base system built on LangGraph
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/zhao111222333/carabot.git
+git clone https://github.com/zhao11122233/CaraBot.git
 cd carabot
 ```
 
@@ -185,7 +185,7 @@ We welcome contributions of all kinds! Please see our [Contributing Guide](CONTR
 
 ### 🐛 Reporting Issues
 
-Please use [GitHub Issues](https://github.com/zhao111222333/carabot/issues) to report issues or suggest improvements.
+Please use [GitHub Issues](https://github.com/zhao11122233/CaraBot/issues) to report issues or suggest improvements.
 
 ## 📄 License
 
@@ -201,7 +201,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-- 📱 GitHub: https://github.com/zhao111222333/carabot
+- 📱 GitHub: https://github.com/zhao11122233/CaraBot
 
 ---
 

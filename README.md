@@ -1,8 +1,8 @@
 # CaraBot: Agent 驱动的智能知识库系统
 
-[![GitHub Stars](https://img.shields.io/github/stars/zhao111222333/carabot?style=flat-square)](https://github.com/zhao111222333/carabot)
-[![GitHub Issues](https://img.shields.io/github/issues/zhao111222333/carabot?style=flat-square)](https://github.com/zhao111222333/carabot/issues)
-[![GitHub License](https://img.shields.io/github/license/zhao111222333/carabot?style=flat-square)](https://github.com/zhao111222333/carabot/blob/main/LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/zhao11122233/CaraBot?style=flat-square)](https://github.com/zhao11122233/CaraBot)
+[![GitHub Issues](https://img.shields.io/github/issues/zhao11122233/CaraBot?style=flat-square)](https://github.com/zhao11122233/CaraBot/issues)
+[![GitHub License](https://img.shields.io/github/license/zhao11122233/CaraBot?style=flat-square)](https://github.com/zhao11122233/CaraBot/blob/main/LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.10+-blue?style=flat-square)](https://python.org)
 
 ---
@@ -201,7 +201,7 @@ graph TD
 
 ## 📞 联系方式
 
-- 📱 GitHub：https://github.com/zhao111222333/carabot
+- 📱 GitHub：https://github.com/zhao11122233/CaraBot
 
 ---
 
