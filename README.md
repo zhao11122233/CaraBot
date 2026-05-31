@@ -116,35 +116,13 @@ curl http://localhost:8000/health
 
 ## 🏗️ 架构概述
 
-```mermaid
-graph TD
-    A[用户] --> B[API 网关]
-    B --> C[认证中间件]
-    C --> D[Chat 对话接口]
-    C --> E[文档管理服务]
-    C --> F[搜索接口]
-    C --> G[统计接口]
-    
-    D --> H[LangGraph Agent]
-    H --> I[LLM 提供者]
-    H --> J[工具]
-    J --> K[搜索服务]
-    J --> L[统计服务]
-    J --> M[上传服务]
-    
-    E --> N[文档处理]
-    E --> O[元数据存储]
-    N --> P[向量嵌入]
-    P --> Q[向量数据库]
-    
-    K --> P
-    K --> Q
-    M --> N
-    
-    O --> R[PostgreSQL]
-    Q --> S[Milvus/Chroma]
-    H --> R
-```
+### 核心架构
+
+- **用户** → API 网关 → 认证中间件 → 接口层
+- **接口层**：Chat 对话接口、文档管理服务、搜索接口、统计接口
+- **Agent 层**：LangGraph Agent 调用 LLM 提供者和工具
+- **工具层**：搜索服务、统计服务、上传服务
+- **数据层**：PostgreSQL（元数据）、Milvus/Chroma（向量数据库）
 
 ### 🧩 技术栈
 

@@ -118,35 +118,13 @@ curl http://localhost:8000/health
 
 ## 🏗️ Architecture Overview
 
-```mermaid
-graph TD
-    A[User] --> B[API Gateway]
-    B --> C[Authentication Middleware]
-    C --> D[Chat API]
-    C --> E[Document Management]
-    C --> F[Search API]
-    C --> G[Stats API]
-    
-    D --> H[LangGraph Agent]
-    H --> I[LLM Provider]
-    H --> J[Tools]
-    J --> K[Search Service]
-    J --> L[Stats Service]
-    J --> M[Upload Service]
-    
-    E --> N[Document Processing]
-    E --> O[Metadata Storage]
-    N --> P[Vector Embedding]
-    P --> Q[Vector Database]
-    
-    K --> P
-    K --> Q
-    M --> N
-    
-    O --> R[PostgreSQL]
-    Q --> S[Milvus/Chroma]
-    H --> R
-```
+### Core Architecture
+
+- **User** → API Gateway → Authentication Middleware → Interface Layer
+- **Interface Layer**: Chat API, Document Management, Search API, Stats API
+- **Agent Layer**: LangGraph Agent calls LLM Provider and Tools
+- **Tools Layer**: Search Service, Stats Service, Upload Service
+- **Data Layer**: PostgreSQL (metadata), Milvus/Chroma (vector database)
 
 ### 🧩 Technology Stack
 
